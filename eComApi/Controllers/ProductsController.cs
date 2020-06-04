@@ -12,13 +12,15 @@ namespace eComApi.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
+        private readonly eComContext _context;
+        public ProductsController(eComContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult GetProducts()
         {
-            return Ok(new List<Product>{ 
-                
-                new Product{ Id=1, CategoryId=1, Name="Balti", Price = 5.5m}
-            
-            });
+            return Ok(_context.Products.ToList());
         }
     }
 }
