@@ -18,9 +18,17 @@ namespace eComApi.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public IActionResult GetProducts()
         {
             return Ok(_context.Products.ToList());
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetProduct(int id)
+        {
+            var product = _context.Products.Find(id);
+            return Ok(product);
         }
     }
 }
