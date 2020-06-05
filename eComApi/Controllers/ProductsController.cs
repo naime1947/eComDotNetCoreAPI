@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using eComApi.Classes;
 using eComApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace eComApi.Controllers
 {
@@ -19,15 +21,24 @@ namespace eComApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] QueryParameters query )
         {
-            return Ok(_context.Products.ToList());
+            IQueryable<Product> products = _context.Products;
+            products = products.Skip(query.Size * (query.Page - 1))
+                .Take(query.Size);
+
+
+            return Ok( await products.ToListAsync());
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetProduct(int id)
+        public async Task<IActionResult> GetProduct(int id)
         {
-            var product = _context.Products.Find(id);
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
             return Ok(product);
         }
     }
