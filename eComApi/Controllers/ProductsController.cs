@@ -21,9 +21,22 @@ namespace eComApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] QueryParameters query )
+        public async Task<IActionResult> GetProducts([FromQuery] ProductQueryParameters query )
         {
             IQueryable<Product> products = _context.Products;
+
+            if(query.MinPrice != null && query.MaxPrice != null)
+            {
+                products = products.Where(p => p.Price >= query.MinPrice && p.Price <= query.MaxPrice);
+            }
+
+            if (!string.IsNullOrEmpty(query.Sku))
+            {
+                products = products.Where(p => p.Sku == query.Sku);
+            }
+
+
+
             products = products.Skip(query.Size * (query.Page - 1))
                 .Take(query.Size);
 
